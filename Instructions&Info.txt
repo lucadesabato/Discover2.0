@@ -1,0 +1,96 @@
+Discover
+
+INSTALLATION:
+
+1) Tools needed for conda environment "condaenv_discover" installation:
+
+sudo apt-get install build-essential
+sudo apt-get install g++
+sudo apt-get -y install cmake
+
+2) Create conda enviroment for DISCOVER
+
+conda create -y --quiet --override-channels --channel iuc --channel bioconda --channel r --channel defaults --channel conda-forge --name condaenv_discover python=3.7 perl=5.26.2 perl-bioperl=1.7 trimmomatic=0.39 spades=3.15 skesa=2.4 muscle=3.8 bowtie2=2.3.4 samtools=1.3.1 bcftools=1.3.1 bwa=0.7.17 mlst=2.16.1 abricate=0.8.10 emboss=6.6.0 chewbbaca=2.7 blast=2.11.0 prodigal=2.6.3
+
+3) update conda enviroment
+
+conda update -n condaenv_discover --update-all
+
+4) fastq-pair installation. Inside the main "discover" directory:
+
+cd discover/scripts/fastq-pair-master
+mkdir build && cd build
+cmake ../
+cd ..
+make && sudo make install
+
+5) duk installation. Within the main "discover" directory:
+
+cd discover/scripts/duk
+make clean
+make
+
+6) Create Virulotyper Database
+
+find your conda environment path
+which anaconda or which miniconda
+
+-move virulotyper database from main discover directory to condaenv_discover/db
+mv discover/virulotyper "PATH to anaconda3"/envs/condaenv_discover/db 
+or
+mv discover/virulotyper "PATH to miniconda3"/envs/condaenv_discover/db
+
+
+START DISCOVER PIPELINE
+
+To start the discover pipeline add fastq files from Ion Torrent or Illumina technologies into a directory. 
+The fastq file must be named as:
+- SampleName_"other information".fastq or .fastqsanger for Ion Torrent
+- SampleName_"other information"_R1.fastq or .fastqsanger, and SampleName_"other information"_R2.fastq or .fastqsanger for Illumina
+
+1) Activate discover environment
+
+conda activate condaenv_discover
+
+2) Within the main discover directory, add fastq files to a "directory" or create new directories with the following command
+
+mkdir "name of desired directory"
+
+and move in the new directory the fastq files to analyze
+
+4) Start the discover pipeline. 
+Use 2 options  -d "name of desired directory"
+
+directory created by users:
+python discover.py -d "name of desired directory"
+
+DATABASE Information
+
+VIRULOTYPER
+downloaded from https://bitbucket.org/genomicepidemiology/virulencefinder_db/src/master/virulence_ecoli.fsa
+Reference: Joensen KG, Scheutz F, Lund O, Hasman H, Kaas RS, Nielsen EM, Aarestrup FM. (2014) Real-time whole-genome sequencing for routine typing, surveillance, and outbreak detection of verotoxigenic Escherichia coli. J. Clin. Micobiol. 52(5) 1501-1510
+
+AMRGENES, abrichate
+pre-installed NCBI AMRFinderPlus
+https://www.ncbi.nlm.nih.gov/bioproject/PRJNA313047
+
+MLST
+https://github.com/tseemann/mlst
+
+CHEWBBACA cgMLST
+https://github.com/B-UMMI/chewBBACA
+
+SEROTYPER
+downloaded from https://bitbucket.org/genomicepidemiology/serotypefinder_db/src/master/
+Reference: Joensen, K. G., A. M. Tetzschner, A. Iguchi, F. M. Aarestrup, and F. Scheutz. 2015. Rapid and easy in silico serotyping of Escherichia coli using whole genome sequencing (WGS) data. J.Clin.Microbiol. 53(8):2410-2426. doi:JCM.00008-15 [pii];10.1128/JCM.00008-15
+
+
+
+
+
+
+
+
+
+
+

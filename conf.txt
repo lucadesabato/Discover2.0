@@ -1,0 +1,26 @@
+Configuration file with Discover parameters
+Tool	option	default value	modified value
+-------------------------
+Trimmomatic	slidingwindow	5	5
+Trimmomatic	slidingwindow quality	20	20
+Trimmomatic	leading	10	10
+Trimmomatic	trailing	10	10
+Trimmomatic	minlen	45	45
+-------------------------
+Spades	Coverage cut-off ratio	0.33	0.33
+Spades	Repeat cut-off ratio	1.75	1.75
+Spades	Length cut-off	1000	1000
+Spades	coverage-length-cutoff	5000	5000
+-------------------------
+Serotyper	evalue	0.001	0.001
+Serotyper	blastn perc_identity	85	85
+Serotyper	lenght alignment	80	80
+Serotyper	perc_identity cut-off	85	85
+-------------------------
+Shigatoxin typer	evalue	0.001	0.001
+Shigatoxin typer	blastn perc_identity	85	85
+Shigatoxin typer	lenght alignment	80	80
+Shigatoxin typer	perc_identity cut-off	85	85
+-------------------------
+Abricate	lenght alignment	80	80
+Abricate	perc_identity cut-off	85	85
