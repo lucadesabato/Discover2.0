@@ -65,7 +65,7 @@ directory created by users:
 python discover.py -d "name of desired directory"
 
 Options configuration
-The default option used by the Discover pipeline can be modified inside the conf.txt file, changing the value under the "modified value" column
+The default options used by the Discover pipeline can be modified inside the conf.txt file changing the value under the "modified value" column
 
 DATABASE Information
 
