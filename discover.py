@@ -160,7 +160,7 @@ def discover(list_ngs_directories):
         os.chdir(file)
         if os.path.isfile("trimmed_" + sample + "_1.fq") == True and os.path.isfile("trimmed_" + sample + "_2.fq") == True:
         # VIRULOTYPER
-            #subprocess.call("abricate --db virulotyper " + sample + "_scaffolds > virulotyper_results.txt", shell=True)
+            subprocess.call("abricate --db virulotyper " + sample + "_scaffolds > virulotyper_results.txt", shell=True)
 
         # SHIGATOXIN TYPER
             subprocess.call("../../discover/scripts/stx_subtype_pe.sh ../.. " + "trimmed_" + sample + "_1.fq " + "trimmed_" + sample + "_2.fq " + sample + "_scaffolds "+shigatoxin_v[0]+" "+shigatoxin_v[1],shell=True)
@@ -185,36 +185,36 @@ def discover(list_ngs_directories):
             serotyper.close()
 
         # MLST
-            #subprocess.call("mlst --scheme ecoli " + sample + "_scaffolds > mlst_results.txt", shell=True)
+            subprocess.call("mlst --scheme ecoli " + sample + "_scaffolds > mlst_results.txt", shell=True)
 
-        # AMRGENES, ate
-            #subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
+        # AMRGENES
+            subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
 
         # CHEwBBACCA
-            #chewbbca = os.popen("which chewBBACA.py").read()
-            #subprocess.call("mkdir chewbbca", shell=True)
-            #subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
-            #subprocess.call(
-            #"python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
-            #shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/RepeatedLoci.txt ./RepeatedLoci.txt", shell=True)
+            chewbbca = os.popen("which chewBBACA.py").read()
+            subprocess.call("mkdir chewbbca", shell=True)
+            subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
+            subprocess.call(
+            "python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
+            shell=True)
+            subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
+            subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
+            subprocess.call("cp chewbacca_results/results_*/RepeatedLoci.txt ./RepeatedLoci.txt", shell=True)
             os.chdir('../')
         else:
         # VIRULOTYPER
-            #subprocess.call("abricate --db virulotyper " + sample + "_scaffolds > virulotyper_results.txt", shell=True)
+            subprocess.call("abricate --db virulotyper " + sample + "_scaffolds > virulotyper_results.txt", shell=True)
 
         # SHIGATOXIN TYPER
-            #subprocess.call("../../discover/scripts/stx_subtype_se.sh ../.. " + "trimmed_" + sample + ".fq " + sample + "_scaffolds "+shigatoxin_v[0]+" "+shigatoxin_v[1], shell=True)
-            #results_stx = getStxSubType()
-            #stx = open("shigatoxin_results.txt", "w")
-            #stx.write("SHIGATOXIN TYPER: " + "\n")
-            #if results_stx == "No subtype match found":
-            #if    stx.write("No match found")
-            #else:
-            #    stx.write(results_stx)
-            #stx.close()
+            subprocess.call("../../discover/scripts/stx_subtype_se.sh ../.. " + "trimmed_" + sample + ".fq " + sample + "_scaffolds "+shigatoxin_v[0]+" "+shigatoxin_v[1], shell=True)
+            results_stx = getStxSubType()
+            stx = open("shigatoxin_results.txt", "w")
+            stx.write("SHIGATOXIN TYPER: " + "\n")
+            if results_stx == "No subtype match found":
+                stx.write("No match found")
+            else:
+                stx.write(results_stx)
+            stx.close()
 
         # SEROTYPER O&H
             subprocess.call("../../discover/scripts/serotype.sh ../.. n trimmed_" + sample + ".fq xxx " + sample + "_scaffolds "+serotyper_v[0]+" "+serotyper_v[1],shell=True)
@@ -227,21 +227,21 @@ def discover(list_ngs_directories):
             serotyper.write("SEROTYPER H: " + results_h)
             serotyper.close()
         # MLST
-            #subprocess.call("mlst --scheme ecoli " + sample + "_scaffolds > mlst_results.txt", shell=True)
+            subprocess.call("mlst --scheme ecoli " + sample + "_scaffolds > mlst_results.txt", shell=True)
 
-        # AMRGENES, abricate
-            #subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
+        # AMRGENES
+            subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
 
         # CHEwBBACCA
-            #chewbbca = os.popen("which chewBBACA.py").read()
-            #subprocess.call("mkdir chewbbca", shell=True)
-            #subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
-            #subprocess.call(
-            #"python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
-            #shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
-            #subprocess.call("cp chewbacca_results/results_*/RepeatedLoci.txt ./RepeatedLoci.txt", shell=True)
+            chewbbca = os.popen("which chewBBACA.py").read()
+            subprocess.call("mkdir chewbbca", shell=True)
+            subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
+            subprocess.call(
+            "python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
+            shell=True)
+            subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
+            subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
+            subprocess.call("cp chewbacca_results/results_*/RepeatedLoci.txt ./RepeatedLoci.txt", shell=True)
             os.chdir('../')
     return True
 
