@@ -34,7 +34,7 @@ then
   then
     perl $tooldir/discover/scripts/spades.pl duk_spades.fasta duk_spades_contig_stats duk_spades_scaffolds duk_spades_scaffold_stats duk_spades_log NODE spades.py --disable-gzip-output --isolate --pe1-ff --pe1-1 fastq:filteredOH1_paired.fq --pe1-2 fastq:filteredOH2_paired.fq
     rm -r output_dir;    
-    blastn -query duk_spades.fasta -subject $tooldir/discover/data/HO/.fasta -task blastn -evalue $evalue -out duk_O_seqs -outfmt '6 qseqid sseqid length qcovs score nident positive gaps ppos qframe sframe qseq sseq qlen slen' -strand both -dust yes -max_target_seqs 10 -perc_identity $perc_id;
+    blastn -query duk_spades.fasta -subject $tooldir/discover/data/HO/O_type.fasta -task blastn -evalue $evalue -out duk_O_seqs -outfmt '6 qseqid sseqid length qcovs score nident positive gaps ppos qframe sframe qseq sseq qlen slen' -strand both -dust yes -max_target_seqs 10 -perc_identity $perc_id;
     blastn -query duk_spades.fasta -subject $tooldir/discover/data/HO/H_type.fasta -task blastn -evalue $evalue -out duk_H_seqs -outfmt '6 qseqid sseqid length qcovs score nident positive gaps ppos qframe sframe qseq sseq qlen slen' -strand both -dust yes -max_target_seqs 10 -perc_identity $perc_id;
   else
     touch duk_O_seqs;
