@@ -6,19 +6,29 @@ import operator
 from numpy import mean
 import subprocess
 from Bio import SeqIO
+import itertools
 
 #extract gene with coverage >80% from abricate output and return two lists:
 #1) geni_ED: list of gene with information of coverage (lenght), % identity and coverage
 #2) list_geni: list of found gene
 def extract_abricate(csv_abricate):
+    #reading the configuration file to extract minimum coverage and perc identity values to filter abricate results
+    with open("../../conf.txt", "r") as csvfile:
+        read_csv = list(csv.reader(csvfile, delimiter="\t"))
+    abricate_v=[]
+    for line in read_csv:
+        if line[0]=="Abricate":
+            if line[2]==line[3]:
+                abricate_v.append(line[2])
+            else:
+                abricate_v.append(line[3])
+
     geni_ED=[]
-    list_geni=[]
     if csv_abricate[0][4]!="STRAND":
         for line in csv_abricate[1:]:
             if float(line[8])>=float(abricate_v[0]) and float(line[9])>=float(abricate_v[1]):
                 in_line=[]
                 in_line.append(line[4])
-                list_geni.append(line[4].split("_")[0])
                 if float(line[8])<99.5:
                     in_line.append(float(line[8]))
                 else:
@@ -31,7 +41,6 @@ def extract_abricate(csv_abricate):
             if float(line[9])>=float(abricate_v[0]) and float(line[10])>=float(abricate_v[1]):
                 in_line=[]
                 in_line.append(line[5])
-                list_geni.append(line[5].split("_")[0])
                 if float(line[9])<99.5:
                     in_line.append(float(line[9]))
                 else:
@@ -39,28 +48,24 @@ def extract_abricate(csv_abricate):
                 in_line.append(float(line[10]))
                 in_line.append(float(line[1].split('_')[-1]))
                 geni_ED.append(in_line)
-    list_geni=list(set(list_geni))
     return geni_ED
 
 #order genes by coverage, identity and collect the mean coverage. Return the list of best gene and the mean K-mer scaffold coverage
 def select_best_abricate (gene_to_select, signal):
     ED_best_gene=[]
-    tot_mean=[]
     if signal=="virulotyper":
         genes=[line[0].split("_")[0].split("-")[0] for line in gene_to_select]
     else:
         genes=[line[0].split("_")[0] for line in gene_to_select]
+
     for geni in genes:
         list_gene=[]
         for line in gene_to_select:
             if line[0].find(geni)!=-1:
                 list_gene.append(line)
-                tot_mean.append(line[3])
         list_gene_sorted=sorted(list_gene, key=operator.itemgetter(1, 2, 3), reverse=True)
         ED_best_gene.append(list_gene_sorted[0])
-    #coverage mean
-    mean_gene=round(mean(tot_mean))
-    return [ED_best_gene, mean_gene]
+    return ED_best_gene
 
 #list of Virulence gene - OLD
 #list_gene_fine=['toxb', 'neuc', 'saa', 'agga', 'espp', 'hlye', 'epea', 'bfpa', 'agg3c', 'aggr', 'f17g', 'capu', 'tir', 'agg3a', 'eata', 'ipah9', 
@@ -82,17 +87,6 @@ for fasta in fasta_sequences:
 
 #Loci from chewBBACA allelecall
 loci=list(csv.reader(open("../discover/chewBBACA_db/results_alleles_example.tsv"),delimiter="\t"))[0]
-
-#reading the configuration file to extract minimum coverage and perc identity values to filter abricate results
-csv_file = open("../conf.txt")
-read_csv = list(csv.reader(csv_file, delimiter="\t"))
-abricate_v=[]
-for line in read_csv:
-    if line[0]=="Abricate":
-        if line[2]==line[3]:
-            abricate_v.append(line[2])
-        else:
-            abricate_v.append(line[3])
 
 #Table creation
 entries = os.listdir('./')
@@ -133,37 +127,49 @@ for file in glob.glob("*_disc/"):
     row_sample=namesample+'\t'
     print(namesample)
 
+    #coverage
+    fasta_sequences = SeqIO.parse(open(namesample+"_scaffolds"),'fasta')
+    cov=[]
+    for fasta in fasta_sequences:
+        cov.append(float(str(fasta.id).split("_")[-1]))
+    mean_contigs=str(round(mean(cov)))
+
     #VIRULOTYPER RESULTS: read the file virulotyper_results.txt
     with open('virulotyper_results.txt') as file1:
         read_csv = list(csv.reader(file1, delimiter="\t"))
 
     #empty list from list_gene_fine
     find_gene=['0']*len(list_gene_fine)
-    mean_gene = "ND"
 
     if len(read_csv)>1:
         #exctract best virulence gene
         geni_abricate=extract_abricate(read_csv)
         if geni_abricate:
-            extract_geni_abricate=select_best_abricate(geni_abricate, "virulotyper")
-            best_geni_abricate=extract_geni_abricate[0]
-            mean_gene=str(extract_geni_abricate[1])
+            best_geni_abricate=select_best_abricate(geni_abricate, "virulotyper")
     
             for x in best_geni_abricate:
-                gen = x[0].split('_')[0]
+                gen = x[0].split('_')[0].split("-")[0]
                 for c in list_gene_fine:
-                    if gen.find(c)!=-1:
+                    if gen==c:
                         find_gene[list_gene_fine.index(c)]=x[0]
+
+            #PER IL CoRSO
+            #for x, j in itertools.product(best_geni_abricate, list_gene_fine):
+            #    if x[0].split('_')[0].split("-")[0]==j:
+            #            #find_gene[list_gene_fine.index(j)]=x[0]
+            #        print(x, j)
+
 
     #MLST
     mlst=''
     species=''
     with open('mlst_results.txt') as file2:
         read_csv = list(csv.reader(file2, delimiter="\t"))
-    for line in read_csv:
+        line = read_csv[0]
         mlst+='ST'+line[2]+'; '
         st_allele=line[3]+"\t"+line[4]+"\t"+line[5]+"\t"+line[6]+"\t"+line[7]+"\t"+line[8]+"\t"+line[9]
-        species+=line[1]+'; '
+        for line in read_csv:
+            species+=line[1]+'; '
 
     if os.path.isfile("./chewbbca_results.tsv") == True:
         #extract EXC+INF from chewBBACA
@@ -179,8 +185,7 @@ for file in glob.glob("*_disc/"):
     file4_lines=file4.readlines()
     list_of_stx = ''
     if file4_lines[1].find("No match found")==-1:
-        for c in file4_lines[1:]:
-            list_of_stx += c[:5] + '; '
+        list_of_stx += file4_lines[1]
     else:
         list_of_stx+="ND  "
     file4.close()        
@@ -194,7 +199,7 @@ for file in glob.glob("*_disc/"):
 
     #add info to sample row and create tab1 Tab_results.txt
     row_sample=namesample+'\t'
-    row_sample+=mean_gene+'\t'
+    row_sample+=mean_contigs+'\t'
     row_sample+=exc+'\t'
     row_sample+=mlst[:-2]+'\t'
     row_sample+=st_allele+'\t'
@@ -212,7 +217,7 @@ for file in glob.glob("*_disc/"):
     if len(read_csv)>1:
         geni_amr_abricate=extract_abricate(read_csv)
         if geni_amr_abricate:
-            best_geniAmr_abricate=select_best_abricate(geni_amr_abricate, "amr")[0]
+            best_geniAmr_abricate=select_best_abricate(geni_amr_abricate, "amr")
             #mean_gene=extract_geniAmr_abricate[1]
             [tab2.write(gene[0] + "; ") for gene in best_geniAmr_abricate]
             tab2.write('\n')
@@ -228,7 +233,6 @@ for file in glob.glob("*_disc/"):
             read_csv = list(csv.reader(file7, delimiter="\t"))
         [tab3.write(value + '\t') for value in read_csv[1][1:]]
         tab3.write("\n")
-        csv_file.close()
     else:
         [tab3.write('ND' + '\t') for locus in loci]
         tab3.write("\n")

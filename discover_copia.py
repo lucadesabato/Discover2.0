@@ -29,6 +29,7 @@ def getStxSubType():
                 stx.write(line[8] + "\t")
                 stx.write("\n")
     stx.close()
+    
     with open("shigatoxin_fc", "r") as csvfile:
         shigatoxin_typing = list(csv.reader(csvfile, delimiter="\t"))
     with open("../../discover/data/stx_subtypes.txt", "r") as csvfile:
@@ -59,7 +60,7 @@ def getStxSubType():
                         shigatoxin_subtypes.append(item[1] + "(" + str(float(subtype[2])) + ")")
                         shigatoxin_subtypes_raw.append(item[1])
         shigatoxin_subtypes.sort()
-        str_shigatoxin_subtype = "\n".join(shigatoxin_subtypes)
+        str_shigatoxin_subtype = "; ".join(shigatoxin_subtypes)
     return str_shigatoxin_subtype
 
 def getSeroGroup(sero_file, antigen):
@@ -192,11 +193,11 @@ def discover(list_ngs_directories):
             subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
 
         # CHEwBBACCA
-            chewbbca = os.popen("which chewBBACA.py").read()
+            chewbbca = os.popen("which chewBBACA.py").read().strip()
             subprocess.call("mkdir chewbbca", shell=True)
             subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
             subprocess.call(
-            "python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
+            "python " + chewbbca + " AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
             shell=True)
             subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
             subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
@@ -233,11 +234,11 @@ def discover(list_ngs_directories):
             subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
 
         # CHEwBBACCA
-            chewbbca = os.popen("which chewBBACA.py").read()
+            chewbbca = os.popen("which chewBBACA.py").read().strip()
             subprocess.call("mkdir chewbbca", shell=True)
             subprocess.call("cp " + sample + "_scaffolds ./chewbbca/" + sample + "_scaffolds.fasta", shell=True)
             subprocess.call(
-            "python " + chewbbca + "chewBBACA.py AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
+            "python " + chewbbca + " AlleleCall -i ./chewbbca/ -g  ../../discover/chewBBACA_db/schema_chewBBACA_cgMLST_V4 -o chewbacca_results/ --cpu 6 --bsr 0.6 --ptf ../../discover/chewBBACA_db/trained_eColi.trn --fr",
             shell=True)
             subprocess.call("cp chewbacca_results/results_*/results_statistics.tsv ./chewbbca_results.tsv", shell=True)
             subprocess.call("cp chewbacca_results/results_*/results_alleles.tsv ./results_alleles.tsv", shell=True)
