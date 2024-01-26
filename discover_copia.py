@@ -7,31 +7,24 @@ import glob
 import operator
 import csv
 
-def countNucleotide(seq_string):
-    nucleotide = ["a", "g", "c", "t", "u", "w", "s", "m", "k", "r", "y", "b", "d", "h", "v"]
-    lenght = 0
-    for char in seq_string.lower():
-        if char in nucleotide:
-            lenght+=1
-    return lenght
-
 def getStxSubType():
     subprocess.call("blastn -query stx.fasta -db ../../discover/data/stx -task blastn -evalue "+shigatoxin_v[0]+" -out shigatoxin -outfmt '6 qseqid sseqid length qcovs score nident positive gaps ppos qframe sframe qseq sseq qlen slen' -num_threads 8 -strand both -dust yes -max_target_seqs 1 -perc_identity "+shigatoxin_v[1],shell=True)
     stx = open("shigatoxin_fc", "w")
     with open("shigatoxin", "r") as csvfile:
         read = list(csv.reader(csvfile, delimiter="\t"))
         for line in read:
-            lenght=countNucleotide(line[11])
-            coverage=(lenght/int(line[-1])*100)
+            coverage=(line[2]/int(line[-1])*100)
             if coverage >= float(shigatoxin_v[2]) and float(line[8]) >= float(shigatoxin_v[3]):
                 stx.write(line[1] + "\t")
-                stx.write(str(coverage) + "\t")
+                stx.write(str(line[3]) + "\t")
                 stx.write(line[8] + "\t")
                 stx.write("\n")
     stx.close()
     
     with open("shigatoxin_fc", "r") as csvfile:
-        shigatoxin_typing = list(csv.reader(csvfile, delimiter="\t"))
+        shigatoxin_csv = list(csv.reader(csvfile, delimiter="\t"))
+        shigatoxin_typing=sorted(shigatoxin_csv, key=lambda x: float(x[2]), reverse=True)
+
     with open("../../discover/data/stx_subtypes.txt", "r") as csvfile:
         shigatoxin_types = list(csv.reader(csvfile, delimiter="\t"))
 
@@ -49,30 +42,29 @@ def getStxSubType():
                     if item[0] == subtype[0] and item[1] not in shigatoxin_subtypes_raw:
                         shigatoxin_subtypes.append(item[1])
                         shigatoxin_subtypes_raw.append(item[1])
+
         # partial matches
         for subtype in shigatoxin_typing:
             for item in shigatoxin_types:
                 if item[0] == subtype[0] and item[1] not in shigatoxin_subtypes_raw:
-                    if item[1][0:4] == "stx1":
                         shigatoxin_subtypes.append(item[1] + "(" + str(float(subtype[2])) + ")")
                         shigatoxin_subtypes_raw.append(item[1])
-                    elif item[1][0:4] == "stx2":
-                        shigatoxin_subtypes.append(item[1] + "(" + str(float(subtype[2])) + ")")
-                        shigatoxin_subtypes_raw.append(item[1])
+
         shigatoxin_subtypes.sort()
         str_shigatoxin_subtype = "; ".join(shigatoxin_subtypes)
     return str_shigatoxin_subtype
 
-def getSeroGroup(sero_file, antigen):
+def getSeroGroup(sero_file):
     antigens=[]
+    antigen=sero_file.split("_")[0]
     with open(sero_file, "r") as csvfile:
         read = list(csv.reader(csvfile, delimiter="\t"))
-        for line in read:
-            lenght=countNucleotide(line[11])
-            coverage=(lenght/int(line[-1])*100)
-            if coverage >= float(serotyper_v[2]) and float(line[8]) >= float(serotyper_v[3]):
-                results=[line[1], coverage, float(line[8])]
-                antigens.append(results)
+        
+    for line in read:
+        coverage=(line[2]/int(line[-1])*100)
+        if coverage >= float(serotyper_v[2]) and float(line[8]) >= float(serotyper_v[3]):
+            results=[line[1], coverage, float(line[8])]
+            antigens.append(results)
     list_antigen_sorted=sorted(antigens, key=operator.itemgetter(1, 2), reverse=True)
     sero=open("serotype_results_"+antigen, "w")
     serogroup=''
@@ -122,6 +114,8 @@ def trimm_contigs(list_ngs_data, directory):
 
         elif file.find('_R1') != -1 and os.path.isfile(file.replace('_R1', '_R2')) == False:
             log.write(sample + "_R2: NOT FOUND" + "\n")
+        elif file.find('_R2') != -1 and os.path.isfile(file.replace('_R2', '_R1')) == False:
+            log.write(sample + "_R1: NOT FOUND" + "\n")
 
         elif file.find('_R1') == -1 and file.find('_R2') == -1:
         # TRIMMING
@@ -220,8 +214,8 @@ def discover(list_ngs_directories):
 
         # SEROTYPER O&H
             subprocess.call("../../discover/scripts/serotype.sh ../.. n trimmed_" + sample + ".fq xxx " + sample + "_scaffolds "+serotyper_v[0]+" "+serotyper_v[1],shell=True)
-            results_o = getSeroGroup('serogroup_O', "O")
-            results_h = getSeroGroup('serogroup_H', "H")
+            results_o = getSeroGroup('serogroup_O')
+            results_h = getSeroGroup('serogroup_H')
             serotyper = open("serotyper_results.txt", "w")
             serotyper.write("SEROTYPER O&H " + "\n")
             serotyper.write("SEROTYPER O: " + results_o + "\n")
