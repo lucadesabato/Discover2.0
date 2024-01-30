@@ -61,7 +61,7 @@ def getSeroGroup(sero_file):
         read = list(csv.reader(csvfile, delimiter="\t"))
         
     for line in read:
-        coverage=(line[2]/int(line[-1])*100)
+        coverage=(int(line[2])/int(line[-1])*100)
         if coverage >= float(serotyper_v[2]) and float(line[8]) >= float(serotyper_v[3]):
             results=[line[1], coverage, float(line[8])]
             antigens.append(results)
