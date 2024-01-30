@@ -13,7 +13,7 @@ def getStxSubType():
     with open("shigatoxin", "r") as csvfile:
         read = list(csv.reader(csvfile, delimiter="\t"))
         for line in read:
-            coverage=(line[2]/int(line[-1])*100)
+            coverage=(int(line[2])/int(line[-1])*100)
             if coverage >= float(shigatoxin_v[2]) and float(line[8]) >= float(shigatoxin_v[3]):
                 stx.write(line[1] + "\t")
                 stx.write(str(line[3]) + "\t")
