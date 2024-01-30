@@ -65,9 +65,9 @@ def select_best_abricate (gene_to_select, signal):
 list_gene_fine=[]
 fasta_sequences = SeqIO.parse(open("../discover/data/virulence_ecoli.fsa"),'fasta')
 for fasta in fasta_sequences:
-    gene_vir= str(fasta.id).split(":")[0].split("_")[0]
-    if gene_vir.split("-")[0] not in list_gene_fine:
-        list_gene_fine.append(gene_vir.split("-")[0])
+    gene_vir= str(fasta.id).split("_")[0].split("-")[0]
+    if gene_vir not in list_gene_fine:
+        list_gene_fine.append(gene_vir)
 
 #Loci from chewBBACA allelecall
 loci=list(csv.reader(open("../discover/chewBBACA_db/results_alleles_example.tsv"),delimiter="\t"))[0]
