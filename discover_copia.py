@@ -160,7 +160,7 @@ def discover(list_ngs_directories):
         subprocess.call("abricate --db virulotyper " + sample + "_scaffolds > virulotyper_results.txt", shell=True)
 
         # MLST
-        subprocess.call("mlst --scheme ecoli " + sample + "_scaffolds > mlst_results.txt", shell=True)
+        subprocess.call("mlst --scheme ecoli_achtman_4 " + sample + "_scaffolds > mlst_results.txt", shell=True)
 
         # AMRGENES
         subprocess.call("abricate -db resfinder " + sample + "_scaffolds > amr_abricate_results.txt", shell=True)
@@ -191,8 +191,8 @@ def discover(list_ngs_directories):
 
         # SEROTYPER O&H
             subprocess.call("../../discover/scripts/serotype.sh ../.. y " + "trimmed_" + sample + "_1.fq " + "trimmed_" + sample + "_2.fq " + sample + "_scaffolds "+serotyper_v[0]+" "+serotyper_v[1],shell=True)
-            results_o = getSeroGroup("serogroup_O", "O")
-            results_h = getSeroGroup("serogroup_H", "H")
+            results_o = getSeroGroup("serogroup_O")
+            results_h = getSeroGroup("serogroup_H")
             serotyper = open("serotyper_results.txt", "w")
             serotyper.write("SEROTYPER O&H " + "\n")
             serotyper.write("SEROTYPER O: " + results_o + "\n")

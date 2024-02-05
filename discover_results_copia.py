@@ -51,17 +51,7 @@ def select_best_abricate (gene_to_select, signal):
         ED_best_gene.append(list_gene_sorted[0])
     return ED_best_gene
 
-#list of Virulence gene - OLD
-#list_gene_fine=['toxb', 'neuc', 'saa', 'agga', 'espp', 'hlye', 'epea', 'bfpa', 'agg3c', 'aggr', 'f17g', 'capu', 'tir', 'agg3a', 'eata', 'ipah9', 
-#'foccsfae', 'papc', 'irea', 'sta1', 'sfad', 'aaic', 'iucc', 'focg', 'espj', 'etpd', 'fyua', 'fim41a', 'vat', 'cia', 'kpsmii', 'orf4', 'mcma', 'chua', 
-#'usp', 'afac', 'nlec', 'stb', 'terc', 'katp', 'aafd', 'eila', 'espa', 'ibea', 'espf', 'celb', 'virf', 'afae', 'tsh', 'aggc', 'aar', 'pic', 'cea', 'agg4a', 
-#'aggd', 'iuta', 'mchf', 'stx1b', 'agg4c', 'nfae', 'ehxa', 'tccp', 'aata', 'aafc', 'mchc', 'cba', 'aap', 'agg4d', 'iha', 'mchb', 'stx2a', 'afad', 'eae', 
-#'pera', 'sfas', 'siga', 'nlea', 'sepa', 'agg3b', 'aafb', 'espb', 'cib', 'tia', 'cif', 'afaa', 'cvac', 'aggb', 'agg5a', 'pet', 'efa1', 'ipad', 'cma', 
-#'cdtb', 'gad', 'afab', 'irp2', 'cci', 'afae8', 'rpea', 'yfcv', 'agg4b', 'clbb', 'f17a', 'trat', 'cnf1', 'sita', 'tcpc', 'sth-sta3', 'kpse', 'stx1a', 
-#'asta', 'foci', 'sat', 'fedf', 'hlyf', 'espc', 'fasa', 'cofa', 'cfac', 'lpfa', 'orf3', 'papa', 'fana', 'stx2b', 'sfae', 'ompt', 'agg3d', 'lnga', 'hra', 
-#'espi', 'aafa', 'suba', 'focc', 'iron', 'nleb', 'senb', 'iss', 'feda', 'etsc', 'kpsmiii', 'kpsm', 'k88ab', 'ltca', 'air', 'mcba']
-
-#list of Virulence gene - NEW
+#list of Virulence gene
 list_gene_fine=[]
 fasta_sequences = SeqIO.parse(open("../discover/data/virulence_ecoli.fsa"),'fasta')
 for fasta in fasta_sequences:
@@ -136,13 +126,6 @@ for file in glob.glob("*_disc/"):
                 for c in list_gene_fine:
                     if gen==c:
                         find_gene[list_gene_fine.index(c)]=x[0]
-
-            #PER IL CoRSO
-            #for x, j in itertools.product(best_geni_abricate, list_gene_fine):
-            #    if x[0].split('_')[0].split("-")[0]==j:
-            #            #find_gene[list_gene_fine.index(j)]=x[0]
-            #        print(x, j)
-
 
     #MLST
     mlst=''
