@@ -15,13 +15,13 @@ then
   $tooldir/discover/scripts/duk/duk -m filteredH1.fq -k 23 $tooldir/discover/data/HO/H_type.fasta $fastqfile1;
   cat filteredO1.fq > filteredOH1.fq;
   cat filteredH1.fq >> filteredOH1.fq;
-  $tooldir/discover/scripts/duk/duk -m filteredO2.fq -k 23 $tooldir/discover/data/HO/O_type.asta $fastqfile2;
+  $tooldir/discover/scripts/duk/duk -m filteredO2.fq -k 23 $tooldir/discover/data/HO/O_type.fasta $fastqfile2;
   $tooldir/discover/scripts/duk/duk -m filteredH2.fq -k 23 $tooldir/discover/data/HO/H_type.fasta $fastqfile2;
   cat filteredO2.fq > filteredOH2.fq;
   cat filteredH2.fq >> filteredOH2.fq;
-  $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair filteredOH1.fq filteredOH2.fq;
-  $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair filteredOH1.fq.single.fq fastqfile2;
-  $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair filteredOH2.fq.single.fq fastqfile1;
+  fastq_pair filteredOH1.fq filteredOH2.fq;
+  fastq_pair filteredOH1.fq.single.fq fastqfile2;
+  fastq_pair filteredOH2.fq.single.fq fastqfile1;
   cat filteredOH1.fq.paired.fq > filteredOH1_paired.fq;
   cat filteredOH1.fq.single.fq.paired.fq >> filteredOH1_paired.fq;
   cat fastqfile1.paired.fq >> filteredOH1_paired.fq;

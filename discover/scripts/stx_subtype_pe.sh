@@ -14,9 +14,9 @@ rm -r output_dir;
 # FILTER + ASSEMBLY
 $tooldir/discover/scripts/duk/duk -m stxdir/filtered1STX.fq -k 23 $tooldir/discover/data/stx.fasta $fastqfile1;
 $tooldir/discover/scripts/duk/duk -m stxdir/filtered2STX.fq -k 23 $tooldir/discover/data/stx.fasta $fastqfile2;
-$tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX.fq stxdir/filtered2STX.fq;
-$tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX.fq.single.fq $fastqfile2;
-$tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered2STX.fq.single.fq $fastqfile1;
+fastq_pair stxdir/filtered1STX.fq stxdir/filtered2STX.fq;
+fastq_pair stxdir/filtered1STX.fq.single.fq $fastqfile2;
+fastq_pair stxdir/filtered2STX.fq.single.fq $fastqfile1;
 
 cat stxdir/filtered1STX.fq.paired.fq > stxdir/filtered1STX_paired.fq;
 cat stxdir/filtered1STX.fq.single.fq.paired.fq >> stxdir/filtered1STX_paired.fq;
@@ -24,7 +24,7 @@ cat stxdir/filtered1STX.fq.single.fq.paired.fq >> stxdir/filtered1STX_paired.fq;
 cat stxdir/filtered2STX.fq.paired.fq > stxdir/filtered2STX_paired.fq;
 cat stxdir/filtered2STX.fq.single.fq.paired.fq >> stxdir/filtered2STX_paired.fq;
 
-$tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX_paired.fq stxdir/filtered2STX_paired.fq;
+fastq_pair stxdir/filtered1STX_paired.fq stxdir/filtered2STX_paired.fq;
 
 dukstx1filesize=$(wc -c "stxdir/filtered1STX_paired.fq.paired.fq" | awk '{print $1}');
 dukstx2filesize=$(wc -c "stxdir/filtered2STX_paired.fq.paired.fq" | awk '{print $1}');
@@ -64,7 +64,7 @@ then
   touch stxdir/multiassembly_stx1_consensus.fasta;
 else
   cat $tooldir/discover/data/stx1.fa >> stxdir/multiassembly_stx1.fasta;
-  muscle -in stxdir/multiassembly_stx1.fasta -out stxdir/multiassembly_stx1_aligned.fasta;
+  muscle -align stxdir/multiassembly_stx1.fasta -output stxdir/multiassembly_stx1_aligned.fasta;
   awk 'BEGIN {RS=">" ; ORS=""} substr($1,1,4)!="stx1" {print ">"$0}' stxdir/multiassembly_stx1_aligned.fasta > stxdir/multiassembly_stx1_aligned_clean.fasta;
   awk '/^>/ {printf("%s%s\n",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' stxdir/multiassembly_stx1_aligned_clean.fasta > stxdir/multiassembly_stx1_aligned_linear.fasta;
   python $tooldir/discover/scripts/GetConsensus.py -i stxdir/multiassembly_stx1_aligned_linear.fasta -o stxdir/multiassembly_stx1_consensus.fasta;
@@ -76,7 +76,7 @@ then
   touch stxdir/multiassembly_stx2_consensus.fasta;
 else
   cat $tooldir/discover/data/stx2.fa >> stxdir/multiassembly_stx2.fasta;
-  muscle -in stxdir/multiassembly_stx2.fasta -out stxdir/multiassembly_stx2_aligned.fasta;
+  muscle -align stxdir/multiassembly_stx2.fasta -output stxdir/multiassembly_stx2_aligned.fasta;
   awk 'BEGIN {RS=">" ; ORS=""} substr($1,1,4)!="stx2" {print ">"$0}' stxdir/multiassembly_stx2_aligned.fasta > stxdir/multiassembly_stx2_aligned_clean.fasta;
   awk '/^>/ {printf("%s%s\n",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' stxdir/multiassembly_stx2_aligned_clean.fasta > stxdir/multiassembly_stx2_aligned_linear.fasta;
   python $tooldir/discover/scripts/GetConsensus.py -i stxdir/multiassembly_stx2_aligned_linear.fasta -o stxdir/multiassembly_stx2_consensus.fasta;
