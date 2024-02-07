@@ -19,10 +19,10 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 
 
-conda create -y --quiet --override-channels --channel iuc --channel bioconda --channel r --channel defaults --channel conda-forge --name condaenv_discover python=3.7 perl perl-bioperl trimmomatic spades skesa muscle bowtie2 samtools bcftools bwa mlst abricate emboss chewbbaca blast prodigal fastq_pair
+conda create -y --quiet --override-channels --channel iuc --channel bioconda --channel r --channel defaults --channel conda-forge --name condaenv_discover python=3.7 perl perl-bioperl trimmomatic spades skesa muscle bowtie2 samtools bcftools bwa mlst abricate emboss chewbbaca=2.8.5 blast prodigal fastq_pair
 
 
-mamba create -n condaenv_discover python=3.7 perl perl-bioperl trimmomatic spades skesa muscle bowtie2 samtools bcftools bwa mlst abricate emboss chewbbaca blast prodigal fastq_pair
+mamba create -n condaenv_discover python=3.7 perl perl-bioperl trimmomatic spades skesa muscle bowtie2 samtools bcftools bwa mlst abricate emboss chewbbaca=2.8.5 blast prodigal fastq_pair
 
 3) duk installation. Within the main "discover" directory:
 
